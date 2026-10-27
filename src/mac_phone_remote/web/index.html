@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101714">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mac Remote">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+  <title>Mac Remote</title>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Mac Remote home"><span class="brand-icon" aria-hidden="true">m<span>r</span></span> mac remote</a>
+      <span class="status" id="status"><span class="status-dot"></span><span id="status-text">Not paired</span></span>
+    </header>
+
+    <section id="pair-screen" class="pair-screen">
+      <div class="eyebrow">YOUR MAC. WITHIN REACH.</div>
+      <h1>A little closer.<br>From anywhere.</h1>
+      <p class="intro">Your phone is now the remote. Leave your Mac where it is. Get comfortable.</p>
+      <div class="pair-card">
+        <span class="step-label">01 / CONNECT YOUR MAC</span>
+        <h2>Make yourself at home.</h2>
+        <p>Enter the 8-digit code shown in your Mac's terminal. Only phones you pair can take control.</p>
+        <form id="pair-form">
+          <label for="pair-code">Pairing code</label>
+          <input id="pair-code" name="code" type="text" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" minlength="8" autocomplete="off" placeholder="00000000" required>
+          <button type="submit" class="primary" id="pair-button">Connect to Mac <span aria-hidden="true">&#8599;</span></button>
+        </form>
+        <p class="fineprint">Private connection via Tailscale. No screen recording. No cloud relay of your controls by this app.</p>
+      </div>
+      <div class="pair-footer"><span aria-hidden="true">&#9671;</span> Built for the other side of the room.</div>
+    </section>
+
+    <section id="remote-screen" hidden>
+      <div id="demo-banner" class="demo-banner" hidden>PREVIEW MODE &mdash; fake monitors, no computer control</div>
+      <div class="remote-heading"><div><div class="eyebrow">SETTLE IN</div><h1>You're in control.</h1></div><button id="logout" class="icon-button" aria-label="Disconnect and unpair this phone" title="Unpair phone">&#9099;</button></div>
+      <div class="section-label"><h2>YOUR SCREENS</h2><button class="text-button" id="refresh">Refresh</button></div>
+      <div id="displays" class="displays" role="group" aria-label="Select a monitor"></div>
+      <p class="monitor-hint">Pick a screen, then click a window to focus it. No screen is streamed.</p>
+
+      <fieldset id="controls" disabled>
+        <legend class="sr-only">Mac controls</legend>
+        <div class="tabs" role="tablist" aria-label="Remote controls">
+          <button id="trackpad-tab" role="tab" aria-selected="true" aria-controls="trackpad-panel">Trackpad</button>
+          <button id="keyboard-tab" role="tab" aria-selected="false" aria-controls="keyboard-panel" tabindex="-1">Keyboard</button>
+        </div>
+
+        <section id="trackpad-panel" role="tabpanel" aria-labelledby="trackpad-tab">
+          <div class="pad-topline"><span>TOUCH SURFACE</span><label for="sensitivity">Speed <select id="sensitivity"><option value="1">Slow</option><option value="2" selected>Normal</option><option value="3.5">Fast</option></select></label></div>
+          <div id="trackpad" class="trackpad" aria-label="Touch trackpad. Move one finger to move the pointer, tap to click, use two fingers to scroll, or hold to right-click.">
+            <span class="pad-corner top-left"></span><span class="pad-corner top-right"></span>
+            <div class="pad-center" aria-hidden="true"><span class="cursor-mark">&#8598;</span><span>Room to move.</span></div>
+            <span class="pad-corner bottom-left"></span><span class="pad-corner bottom-right"></span>
+            <div class="pad-instructions">ONE FINGER TO MOVE <span>&middot;</span> TWO TO SCROLL</div>
+          </div>
+          <div class="click-row"><button data-click="left">Left click <span aria-hidden="true">&#8601;</span></button><button data-click="right">Right click <span aria-hidden="true">&#8600;</span></button></div>
+          <p class="gesture-hint">Tap to click &middot; Double-tap to double-click &middot; Hold for right-click</p>
+          <div class="quick-actions"><button data-key="space"><span aria-hidden="true">&#9654; / &#10074;&#10074;</span> Space</button><button data-shortcut="fullscreen"><span aria-hidden="true">&#9974;</span> Full screen</button><button data-key="escape">esc <span>Escape</span></button></div>
+          <p class="fineprint action-note">Space controls the focused app, not a system-wide media key.</p>
+          <div class="scroll-strip"><span>SCROLL</span><button data-scroll="-180" aria-label="Scroll up">&#8593;</button><button data-scroll="180" aria-label="Scroll down">&#8595;</button><button data-key="left" aria-label="Left arrow">&#8592;</button><button data-key="right" aria-label="Right arrow">&#8594;</button></div>
+        </section>
+
+        <section id="keyboard-panel" role="tabpanel" aria-labelledby="keyboard-tab" hidden>
+          <label class="input-label" for="type-text">TYPE ON YOUR MAC</label>
+          <textarea id="type-text" maxlength="1000" rows="4" placeholder="A search, a URL, a message..." autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
+          <div class="text-actions"><span>Sent to the focused Mac window</span><button id="send-text" class="primary">Send text &#8599;</button></div>
+          <div class="key-grid"><button data-key="escape">esc</button><button data-key="tab">Tab</button><button data-key="backspace" aria-label="Backspace">&#9003;</button><button data-key="enter">Return &#8629;</button><button data-key="left" aria-label="Left arrow">&#8592;</button><button data-key="up" aria-label="Up arrow">&#8593;</button><button data-key="down" aria-label="Down arrow">&#8595;</button><button data-key="right" aria-label="Right arrow">&#8594;</button></div>
+          <div class="section-label"><h2>SHORTCUTS</h2><span class="muted">Command, included.</span></div>
+          <div class="shortcut-grid"><button data-shortcut="copy">Copy</button><button data-shortcut="paste">Paste</button><button data-shortcut="select-all">Select all</button><button data-shortcut="undo">Undo</button><button data-shortcut="find">Find</button><button data-shortcut="spotlight">Spotlight</button><button data-shortcut="switch-app">Switch app</button><button data-shortcut="close-tab">Close tab</button></div>
+        </section>
+      </fieldset>
+      <footer class="remote-footer"><span><span class="privacy-dot"></span> No pixels leave your Mac.</span><span>Just you. Just controls.</span></footer>
+    </section>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+  </main>
+</body>
+</html>
