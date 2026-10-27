@@ -26,15 +26,18 @@ def main():
         return
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
     try:
-        controller = DemoController() if args.demo else MacController()
         origin = args.public_url or f"http://127.0.0.1:{args.port}"
+        if not args.demo and not args.public_url:
+            parser.error("--public-url with your Tailscale HTTPS origin is required for real Mac control.")
+        controller = DemoController() if args.demo else MacController()
         server = RemoteServer(("127.0.0.1", args.port), controller, origin)
     except (RuntimeError, ValueError, OSError) as exc:
         parser.exit(1, f"Cannot start remote: {exc}\n")
     print(f"\n{'DEMO ONLY - no computer control' if args.demo else 'Mac Phone Remote'}")
     print(f"Open on your phone: {server.origin}")
-    print(f"Pairing code: {server.auth.code} (valid for 10 minutes)")
-    print("Sessions last 12 hours. Restart to revoke every device and rotate the code.")
+    print(f"Pairing code: {server.auth.code} (single use; expires in 10 minutes)")
+    print("One pairing per run; sessions last 1 hour and are bound to your Tailscale user.")
+    print("Restart to pair again or revoke the current session.")
     if not args.public_url:
         print("Local preview only. Configure Tailscale Serve and --public-url for iPhone access.")
     print("Keep this terminal open. Press Ctrl+C to stop.\n", flush=True)
